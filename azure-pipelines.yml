@@ -1,0 +1,30 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+  paths:
+    exclude:
+    - '**/README.md'
+
+variables:
+  azureConnection: 'FALU - Azure'
+
+steps:
+- task: replacetokens@3
+  displayName: 'Replace tokens in *.bicep'
+  inputs:
+    targetFiles: '**/*.bicep'
+    actionOnMissing: fail
+    verbosity: detailed
+
+- task: AzureCLI@2
+  displayName: "Deploy to Container Apps"
+  inputs:
+    azureSubscription: $(azureConnection)
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: >
+      az deployment group create
+      --resource-group 'FALU-SAMPLES'
+      --template-file main.bicep
