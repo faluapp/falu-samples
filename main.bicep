@@ -85,6 +85,10 @@ resource pythonApp 'Microsoft.Web/sites@2022-03-01' = {
           name: 'WEBSITE_CONTENTSHARE'
           value: toLower(pythonAppName)
         }
+        {
+          name: 'FALU_API_KEY'
+          value: '#{FALU_API_SECRET_KEY}#'
+        }
       ]
       cors: {
         allowedOrigins: [
