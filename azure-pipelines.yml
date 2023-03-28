@@ -7,9 +7,6 @@ trigger:
     exclude:
     - '**/README.md'
 
-variables:
-  azureConnection: 'FALU - Azure'
-
 steps:
 - task: UsePythonVersion@0
   displayName: 'Use Python 3.9'
@@ -59,7 +56,7 @@ steps:
     scriptLocation: inlineScript
     inlineScript: >
       az deployment group create
-      --resource-group 'FALU-SAMPLES'
+      --resource-group $(azureResourceGroupName)
       --template-file '$(Build.SourcesDirectory)/main.bicep'
 
 - task: AzureFunctionApp@1
@@ -69,4 +66,4 @@ steps:
     appType: functionAppLinux # default is functionApp
     appName: 'falu-samples-python'
     package: '$(Build.ArtifactStagingDirectory)/identity-verification-python-$(Build.BuildId).zip'
-    resourceGroupName: 'FALU-SAMPLES'
+    resourceGroupName: $(azureResourceGroupName)
