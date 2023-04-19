@@ -1,15 +1,12 @@
 import os
 import json
 import requests
+import falu
 
 import azure.functions as func
 from .serializer import TemporaryKeySerializer, IdentityVerificationCreationSerializer, IdentityVerificationSerializer
 
-headers = {
-    'Content-Type': 'application/json; charset=utf-8',
-    'Authorization': "{} {}".format("Bearer", os.environ.get('FALU_API_KEY')),
-    'X-Falu-Version': '2022-05-01',
-}
+falu.api_key = os.environ.get('FALU_API_KEY')
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -17,36 +14,33 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     serializer = IdentityVerificationCreationSerializer(**req.get_json())
 
     if serializer is not None:
-        r = requests.post("https://api.falu.io/v1/identity/verifications", data=json.dumps(serializer.__dict__),
-                          headers=headers)
+        verification, error = falu.IdentityVerification.create_identity_verification(
+            data=serializer.__dict__)
 
-        if r.status_code == 200 or r.status_code == 201 or r.status_code == 204:
-            print(r.json())
-            data = IdentityVerificationSerializer(**r.json())
+        if verification:
+            if verification.resource is not None:
+                temp_key = create_key(verification.id)
 
-            if data is not None:
-                temp_key = create_temporary_key(data.id)
                 if temp_key is None:
                     return func.HttpResponse("Key generation failed", status_code=400)
-                data.__dict__["temporary_key"] = temp_key
-                return func.HttpResponse(json.dumps(data.__dict__), status_code=200, mimetype='application/json')
-        elif r.status_code == 400:
-            return func.HttpResponse(json.dumps(r.json()), status_code=400, mimetype='application/json')
+
+                data = verification.resource
+                data["temporary_key"] = temp_key
+                return func.HttpResponse(json.dumps(data), status_code=200, mimetype='application/json')
+        elif error:
+            return func.HttpResponse(error.problem, status_code=error.status_code, mimetype='application/json')
 
 
-def create_temporary_key(identity_verification):
+def create_key(identity_verification):
     request = {
         "identity_verification": identity_verification
     }
 
-    r = requests.post("https://api.falu.io/v1/temporary_keys", data=json.dumps(request),
-                      headers=headers)
+    temporary_key, error = falu.TemporaryKey.create_temporary_key(data=request)
 
-    if r.status_code == 200 or r.status_code == 201 or r.status_code == 204:
-        serializer = TemporaryKeySerializer(**r.json())
-
-        if serializer.secret is not None:
-            return serializer.secret
+    if temporary_key is not None:
+        if temporary_key.secret is not None:
+            return temporary_key.secret
         else:
             return None
 
