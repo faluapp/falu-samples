@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  identity:
+    image: falu/samples/python-identity-verification:${DOCKERIMAGETAG:-latest}
+    build:
+      dockerfile: Dockerfile.python
+      context: .
+    ports: ["8000:8000"]
