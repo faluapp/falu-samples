@@ -7,49 +7,48 @@ trigger:
     exclude:
     - '**/README.md'
 
+variables:
+  dockerImageTag: '$(Build.BuildNumber)'
+  dockerComposeFile: '**/docker-compose.yml'
+
 steps:
-- task: UsePythonVersion@0
-  displayName: 'Use Python 3.9'
-  inputs:
-    versionSpec: '3.9'
-    architecture: 'x64'
-
-- script: |
-    python -m venv .venv
-    source .venv/bin/activate
-    python -m pip install --upgrade pip
-    pip install --target="./.python_packages/lib/site-packages" -r ./requirements.txt
-  displayName: 'Install dependencies'
-  workingDirectory: 'identity-verification-python'
-
-- task: ArchiveFiles@2
-  displayName: "Archive files"
-  inputs:
-    rootFolderOrFile: "$(Build.SourcesDirectory)/identity-verification-python"
-    includeRootFolder: false
-    archiveFile: "$(Build.ArtifactStagingDirectory)/identity-verification-python-$(Build.BuildId).zip"
-
-- task: PublishBuildArtifacts@1
-  displayName: "Publish drop artifact"
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: 'drop'
-
 - task: replacetokens@3
-  displayName: 'Replace tokens in *.bicep'
+  displayName: 'Replace tokens in deploy folder'
   inputs:
-    targetFiles: '**/*.bicep'
+    rootDirectory: 'deploy'
+    targetFiles: |
+      **/*.bicep
+      **/*.parameters.json
     actionOnMissing: fail
     verbosity: detailed
 
-- task: PublishBuildArtifacts@1
-  displayName: "Publish deploy artifact"
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish deploy artifact'
   inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)/main.bicep'
+    targetPath: 'deploy'
     artifactName: 'deploy'
 
+# Build docker images
+- task: DockerCompose@0
+  displayName: 'Build docker images'
+  inputs:
+    containerregistrytype: 'Container Registry'
+    dockerRegistryEndpoint: '$(dockerRegistryEndpoint)'
+    dockerComposeFile: '$(dockerComposeFile)'
+    action: 'Build services'
+    arguments: '--parallel'
+
+# Push docker images
+- task: DockerCompose@0
+  displayName: 'Push docker images'
+  inputs:
+    containerregistrytype: 'Container Registry'
+    dockerRegistryEndpoint: '$(dockerRegistryEndpoint)'
+    dockerComposeFile: '$(dockerComposeFile)'
+    action: 'Push services'
+
 - task: AzureCLI@2
-  displayName: "Deploy to Infrastructure"
+  displayName: 'Deploy to Infrastructure'
   inputs:
     azureSubscription: $(azureConnection)
     scriptType: bash
@@ -57,13 +56,5 @@ steps:
     inlineScript: >
       az deployment group create
       --resource-group $(azureResourceGroupName)
-      --template-file '$(Build.SourcesDirectory)/main.bicep'
-
-- task: AzureFunctionApp@1
-  displayName: "Deploy falu-samples-python"
-  inputs:
-    azureSubscription: $(azureConnection)
-    appType: functionAppLinux # default is functionApp
-    appName: 'falu-samples-python'
-    package: '$(Build.ArtifactStagingDirectory)/identity-verification-python-$(Build.BuildId).zip'
-    resourceGroupName: $(azureResourceGroupName)
+      --template-file '$(Build.SourcesDirectory)/deploy/main.bicep'
+      --parameters '$(Build.SourcesDirectory)/deploy/main.parameters.json'

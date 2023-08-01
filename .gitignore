@@ -136,3 +136,6 @@ __azurite_db*__.json
 
 # Idea
 .idea
+
+# Local
+*.parameters.local.json

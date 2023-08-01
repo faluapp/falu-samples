@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "certificateValue": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/#{AZURESUBSCRIPTIONID}#/resourceGroups/#{AZURERESOURCEGROUPNAME}#/providers/Microsoft.KeyVault/vaults/falu-samples"
+        },
+        "secretName": "star-hst-smpls-falu-io"
+      }
+    }
+  }
+}
