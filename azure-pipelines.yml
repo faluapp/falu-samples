@@ -8,7 +8,7 @@ trigger:
     - '**/README.md'
 
 schedules:
-- cron: "0 10 * * MON" # ensure the certs are valid (10am UTC, Mondays)
+- cron: "0 10 */15 * *" # ensure the certs are valid (10am UTC, every 15 days)
   displayName: Weekly build
   always: true # always run this schedule even if there are no changes
   branches:
