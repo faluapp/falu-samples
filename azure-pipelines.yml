@@ -49,6 +49,8 @@ steps:
 # Push docker images
 - task: DockerCompose@0
   displayName: 'Push docker images'
+  # exclude PR branches for dependabot
+  condition: "and(succeeded(), not(contains(variables['System.PullRequest.SourceBranch'], 'dependabot/')))"
   inputs:
     containerregistrytype: 'Container Registry'
     dockerRegistryEndpoint: '$(dockerRegistryEndpoint)'
@@ -57,6 +59,8 @@ steps:
 
 - task: AzureCLI@2
   displayName: 'Deploy to Infrastructure'
+  # exclude PR branches for dependabot
+  condition: "and(succeeded(), not(contains(variables['System.PullRequest.SourceBranch'], 'dependabot/')))"
   inputs:
     azureSubscription: $(azureConnection)
     scriptType: bash
