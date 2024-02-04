@@ -5,12 +5,15 @@
 
 version: 2
 updates:
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/python" # Location of package manifests
-    schedule:
-      interval: "monthly"
-    # groups:
-    #   python-packages:
-    #     patterns:
-    #       - "*"
-    open-pull-requests-limit: 1
+- package-ecosystem: "pip" # See documentation for possible values
+  directory: "/python" # Location of package manifests
+  schedule:
+    interval: "monthly"
+  groups:
+    python-packages:
+      patterns:
+        - "*"
+- directory: /
+  package-ecosystem: "docker"
+  schedule:
+    interval: "monthly"
