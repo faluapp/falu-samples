@@ -9,13 +9,11 @@ updates:
   directory: "/python" # Location of package manifests
   schedule:
     interval: "monthly"
-  groups:
-    python-packages:
-      patterns:
-      - "*"
+  # groups:
+  #   python-packages:
+  #     patterns:
+  #     - "*"
   ignore:
-  - dependency-name: "*"
-    update-types: ["version-update:semver-major"]
   - dependency-name: "urllib3"
 - directory: /
   package-ecosystem: "docker"
