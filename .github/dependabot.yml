@@ -12,7 +12,10 @@ updates:
   groups:
     python-packages:
       patterns:
-        - "*"
+      - "*"
+  ignore:
+  - dependency-name: "*"
+    update-types: ["version-update:semver-major"]
 - directory: /
   package-ecosystem: "docker"
   schedule:
