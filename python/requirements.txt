@@ -18,5 +18,5 @@ responses==0.23.1
 sqlparse==0.4.4
 tomli==2.0.1
 types-PyYAML==6.0.12.11
-typing_extensions==4.7.1
+typing_extensions==4.9.0
 urllib3==1.26.14
