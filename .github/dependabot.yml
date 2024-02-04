@@ -9,7 +9,8 @@ updates:
     directory: "/python" # Location of package manifests
     schedule:
       interval: "monthly"
-    groups:
-      python-packages:
-        patterns:
-          - "*"
+    # groups:
+    #   python-packages:
+    #     patterns:
+    #       - "*"
+    open-pull-requests-limit: 1
