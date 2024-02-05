@@ -13,8 +13,6 @@ updates:
     python-packages:
       patterns:
         - "*"
-      exclude-patterns:
-        - "urllib3" # it causes the whole group to fail
 - directory: /
   package-ecosystem: "docker"
   schedule:
