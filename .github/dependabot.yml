@@ -23,3 +23,10 @@ updates:
   reviewers:
     - SecyWecy
     - mburumaxwell
+- package-ecosystem: "github-actions" # See documentation for possible values
+  directory: "/" # Location of package manifests
+  schedule:
+    interval: "monthly"
+  reviewers:
+    - SecyWecy
+    - mburumaxwell
