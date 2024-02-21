@@ -5,28 +5,28 @@
 
 version: 2
 updates:
-- package-ecosystem: "pip" # See documentation for possible values
-  directory: "/python" # Location of package manifests
-  schedule:
-    interval: "monthly"
-  reviewers:
-    - SecyWecy
-    - mburumaxwell
-  groups:
-    python-packages:
-      patterns:
-        - "*"
-- directory: /
-  package-ecosystem: "docker"
-  schedule:
-    interval: "monthly"
-  reviewers:
-    - SecyWecy
-    - mburumaxwell
-- package-ecosystem: "github-actions" # See documentation for possible values
-  directory: "/" # Location of package manifests
-  schedule:
-    interval: "monthly"
-  reviewers:
-    - SecyWecy
-    - mburumaxwell
+  - package-ecosystem: "pip" # See documentation for possible values
+    directory: "/python" # Location of package manifests
+    schedule:
+      interval: "monthly"
+    reviewers:
+      - sethonyango
+      - mburumaxwell
+    groups:
+      python-packages:
+        patterns:
+          - "*"
+  - directory: /
+    package-ecosystem: "docker"
+    schedule:
+      interval: "monthly"
+    reviewers:
+      - sethonyango
+      - mburumaxwell
+  - package-ecosystem: "github-actions" # See documentation for possible values
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "monthly"
+    reviewers:
+      - sethonyango
+      - mburumaxwell
