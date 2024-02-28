@@ -29,19 +29,34 @@ env:
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   FALU_API_SECRET_KEY: ${{ secrets.FALU_API_SECRET_KEY }}
   ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
-  DOCKER_IMAGE_TAG: ${{ github.run_number }}
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Required for GitVersion
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0
+      with:
+        versionSpec: '5.x'
+
+    - name: Determine Version
+      uses: gittools/actions/gitversion/execute@v0
+      id: gitversion
+      with:
+        useConfigFile: true
 
     - name: Replace tokens in deploy folder
       uses: cschleiden/replace-tokens@v1
       with:
         files: '["${{ github.workspace }}/deploy/**/*.bicep","${{ github.workspace }}/deploy/**/*.parameters.json"]'
+      env:
+        DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
     - name: Publish deploy artifact
       uses: actions/upload-artifact@v2
@@ -69,14 +84,18 @@ jobs:
         --file ${{ github.workspace }}/docker-compose.ci.yml
         build
         --parallel
+      env:
+        DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
     - name: Push docker images
-      if: ${{ !contains(github.ref, 'dependabot/') }}
+      if: ${{ !contains(github.ref, 'dependabot/') && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
       run: >
         docker compose
         --file ${{ github.workspace }}/docker-compose.yml
         --file ${{ github.workspace }}/docker-compose.ci.yml
         push
+      env:
+        DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
     - name: Deploy
       if: ${{ !contains(github.ref, 'dependabot/') && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
