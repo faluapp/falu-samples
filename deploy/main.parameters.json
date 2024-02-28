@@ -5,7 +5,7 @@
     "certificateValue": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/#{AZURESUBSCRIPTIONID}#/resourceGroups/#{AZURERESOURCEGROUPNAME}#/providers/Microsoft.KeyVault/vaults/falu-samples"
+          "id": "/subscriptions/#{AZURE_SUBSCRIPTION_ID}#/resourceGroups/FALU-SAMPLES/providers/Microsoft.KeyVault/vaults/falu-samples"
         },
         "secretName": "star-hst-smpls-falu-io"
       }
