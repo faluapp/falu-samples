@@ -1,0 +1,89 @@
+name: Build
+
+on:
+  push:
+    branches:
+    - main
+    tags:
+    - '*'
+    paths-ignore:
+    - README.md
+    - LICENSE
+    - CHANGELOG.md
+    - docs/**
+    - '**/README.md'
+  pull_request:
+    branches:
+    - main
+    paths-ignore:
+    - README.md
+    - LICENSE
+    - CHANGELOG.md
+    - docs/**
+    - '**/README.md'
+  schedule:
+  - cron: '0 10 */15 * *'
+  workflow_dispatch:
+
+env:
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  FALU_API_SECRET_KEY: ${{ secrets.FALU_API_SECRET_KEY }}
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+  DOCKER_IMAGE_TAG: ${{ github.run_number }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Replace tokens in deploy folder
+      uses: cschleiden/replace-tokens@v1
+      with:
+        files: '["${{ github.workspace }}/deploy/**/*.bicep","${{ github.workspace }}/deploy/**/*.parameters.json"]'
+
+    - name: Publish deploy artifact
+      uses: actions/upload-artifact@v2
+      with:
+        path: deploy
+        name: deploy
+        retention-days: 1
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: 'Docker Login'
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.ACR_LOGIN_SERVER }}
+        username: ${{ secrets.AZURE_SP_CLIENT_ID }}
+        password: ${{ secrets.AZURE_SP_CLIENT_SECRET }}
+
+    - name: Build docker images
+      run: >
+        docker compose
+        --file ${{ github.workspace }}/docker-compose.yml
+        --file ${{ github.workspace }}/docker-compose.ci.yml
+        build
+        --parallel
+
+    - name: Push docker images
+      if: ${{ !contains(github.ref, 'dependabot/') }}
+      run: >
+        docker compose
+        --file ${{ github.workspace }}/docker-compose.yml
+        --file ${{ github.workspace }}/docker-compose.ci.yml
+        push
+
+    - name: Deploy
+      if: ${{ !contains(github.ref, 'dependabot/') && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: 'FALU-SAMPLES'
+        template: '${{ github.workspace }}/deploy/main.bicep'
+        parameters: '${{ github.workspace }}/deploy/main.parameters.json'
+        scope: 'resourcegroup'

@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   identity:
-    image: falu/samples/identity-verification:${DOCKERIMAGETAG:-latest}
+    image: falu/samples/identity-verification:${DOCKER_IMAGE_TAG:-latest}
     build:
       dockerfile: Dockerfile.python
       context: .

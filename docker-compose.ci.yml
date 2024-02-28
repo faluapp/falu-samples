@@ -1,0 +1,4 @@
+version: '3.8'
+services:
+  identity:
+    image: ${ACR_LOGIN_SERVER}/falu/samples/identity-verification:${DOCKER_IMAGE_TAG:-latest}

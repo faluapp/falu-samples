@@ -6,7 +6,7 @@ param location string = resourceGroup().location
 param certificateValue string = ''
 
 @description('The tag of the container. E.g. 1.2.0')
-param containerImageTag string = '#{DOCKERIMAGETAG}#'
+param containerImageTag string = '#{DOCKER_IMAGE_TAG}#'
 
 var managedIdentityName = 'falu-samples'
 var keyVaultName = 'falu-samples'
