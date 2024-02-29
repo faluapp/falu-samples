@@ -65,16 +65,6 @@ jobs:
         name: deploy
         retention-days: 1
 
-    - name: Build docker images
-      run: >
-        docker compose
-        --file ${{ github.workspace }}/docker-compose.yml
-        --file ${{ github.workspace }}/docker-compose.ci.yml
-        build
-        --parallel
-      env:
-        DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
-
     - name: Azure Login
       if: ${{ !contains(github.ref, 'dependabot/') && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
       uses: azure/login@v1
@@ -88,6 +78,16 @@ jobs:
         login-server: ${{ env.ACR_LOGIN_SERVER }}
         username: ${{ secrets.AZURE_SP_CLIENT_ID }}
         password: ${{ secrets.AZURE_SP_CLIENT_SECRET }}
+
+    - name: Build docker images
+      run: >
+        docker compose
+        --file ${{ github.workspace }}/docker-compose.yml
+        --file ${{ github.workspace }}/docker-compose.ci.yml
+        build
+        --parallel
+      env:
+        DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
     - name: Push docker images
       if: ${{ !contains(github.ref, 'dependabot/') && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
