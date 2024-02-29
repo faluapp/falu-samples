@@ -25,6 +25,9 @@ on:
   - cron: '0 10 */15 * *'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}
+
 env:
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   FALU_API_SECRET_KEY: ${{ secrets.FALU_API_SECRET_KEY }}
