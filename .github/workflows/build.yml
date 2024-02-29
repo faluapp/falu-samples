@@ -69,13 +69,13 @@ jobs:
         retention-days: 1
 
     - name: Azure Login
-      if: ${{ !contains(github.ref, 'dependabot/') && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
+      if: ${{ github.actor != 'dependabot[bot]' && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: 'Docker Login'
-      if: ${{ !contains(github.ref, 'dependabot/') && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
+      if: ${{ github.actor != 'dependabot[bot]' && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
       uses: azure/docker-login@v1
       with:
         login-server: ${{ env.ACR_LOGIN_SERVER }}
@@ -93,7 +93,7 @@ jobs:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
     - name: Push docker images
-      if: ${{ !contains(github.ref, 'dependabot/') && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
+      if: ${{ github.actor != 'dependabot[bot]' && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
       run: >
         docker compose
         --file ${{ github.workspace }}/docker-compose.yml
@@ -103,7 +103,7 @@ jobs:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
     - name: Deploy
-      if: ${{ !contains(github.ref, 'dependabot/') && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
+      if: ${{ github.actor != 'dependabot[bot]' && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
