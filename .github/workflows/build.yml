@@ -62,7 +62,7 @@ jobs:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
     - name: Publish deploy artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         path: deploy
         name: deploy
