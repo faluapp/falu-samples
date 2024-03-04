@@ -91,6 +91,7 @@ jobs:
         --parallel
       env:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
+        ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER || 'dummy.com' }}
 
     - name: Push docker images
       if: ${{ github.actor != 'dependabot[bot]' && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
