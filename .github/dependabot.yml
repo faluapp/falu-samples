@@ -1,32 +1,37 @@
 # To get started with Dependabot version updates, you'll need to specify which
 # package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# Please see the documentation for more information:
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+# https://containers.dev/guide/dependabot
 
 version: 2
 updates:
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/python" # Location of package manifests
+  - package-ecosystem: 'pip'
+    directory: '/python'
     schedule:
-      interval: "monthly"
+      interval: 'monthly'
     reviewers:
       - sethonyango
       - mburumaxwell
     groups:
       python-packages:
-        patterns:
-          - "*"
-  - directory: /
-    package-ecosystem: "docker"
+        patterns: ['*']
+  - package-ecosystem: 'docker'
+    directory: /
     schedule:
-      interval: "monthly"
+      interval: 'monthly'
     reviewers:
       - sethonyango
       - mburumaxwell
-  - package-ecosystem: "github-actions" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "monthly"
+      interval: 'monthly'
     reviewers:
-      - sethonyango
+      - mburumaxwell
+  - package-ecosystem: 'devcontainers'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+    reviewers:
       - mburumaxwell
