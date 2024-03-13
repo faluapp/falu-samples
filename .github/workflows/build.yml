@@ -165,5 +165,5 @@ jobs:
           You can check them out below
           |Application|Url|
           |--|--|
-          |Identity (Python)|https://identity-verification${{ env.HOSTNAME_SUFFIX_FOR_PR }}|
+          |Identity (Python)|https://identity-verification${{ env.HOSTNAME_SUFFIX_FOR_PR }}/ping|
         comment_tag: samples
