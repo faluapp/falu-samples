@@ -78,7 +78,6 @@ resource apps 'Microsoft.App/containerApps@2022-10-01' = [for def in appDefs: {
       registries: [ { identity: managedIdentity.id, server: acrServerName } ]
       secrets: [
         { name: 'falu-secret-api-key', value: '#{FALU_API_SECRET_KEY}#' }
-        { name: 'python-secret-key', value: uniqueString(resourceGroup().id) }
       ]
     }
     template: {
@@ -88,7 +87,6 @@ resource apps 'Microsoft.App/containerApps@2022-10-01' = [for def in appDefs: {
           name: def.name
           env: concat(
             def.lang == 'python' ? [
-              { name: 'SECRET_KEY', secretRef: 'python-secret-key' }
               { name: 'FALU_API_KEY', secretRef: 'falu-secret-api-key' }
             ] : [],
             def.lang == 'dotnet' ? [
