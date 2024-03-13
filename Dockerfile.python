@@ -1,16 +1,13 @@
 FROM python:3.11-slim-buster
 
+EXPOSE 8000
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 
-ADD python/requirements.txt /app/
+RUN pip install pipenv
 
-COPY python /app/
+COPY python .
+RUN pipenv install --system --deploy --ignore-pipfile
 
-ADD . /app/
-
-RUN pip install -r requirements.txt
-
-EXPOSE 8000
-CMD [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
+CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]

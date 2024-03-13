@@ -10,6 +10,11 @@ falu.api_key = os.environ.get("FALU_API_KEY")
 app = FastAPI()
 
 
+@app.get("/ping")
+async def ping():
+	return "pong"
+
+
 @app.post("/identity/create-verification", response_model=IdentityVerification)
 async def create_verification(verification: IdentityVerificationCreation):
 	verification, error = falu.IdentityVerification.create_identity_verification(data=verification.dict())
