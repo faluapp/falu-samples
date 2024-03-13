@@ -1,0 +1,43 @@
+
+name: Remove Review Resources
+
+on:
+  pull_request:
+    types:
+    - closed
+    branches:
+    - main
+    paths-ignore:
+    - .devcontainer/**
+    - .vscode/**
+    - docs/**
+    - README.md
+    - LICENSE
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: 'Pull request number'
+        required: true
+        type: number
+
+env:
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+jobs:
+  remove:
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    name: Remove
+
+    steps:
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Remove review resources
+      run: |
+        dotnet tool install --global azure-resources-cleaner && \
+        azrc \
+        --pr ${{ inputs.pr || github.event.pull_request.number }} \
+        --subscription ${{ env.AZURE_SUBSCRIPTION_ID }}

@@ -7,11 +7,12 @@ on:
     tags:
     - '*'
     paths-ignore:
+    - .devcontainer/**
+    - .vscode/**
+    - docs/**
     - README.md
     - LICENSE
     - CHANGELOG.md
-    - docs/**
-    - .vscode/**
     - .github/**
     - '!.github/workflows/build.yml'
     - '**/README.md'
@@ -19,11 +20,12 @@ on:
     branches:
     - main
     paths-ignore:
+    - .devcontainer/**
+    - .vscode/**
+    - docs/**
     - README.md
     - LICENSE
     - CHANGELOG.md
-    - docs/**
-    - .vscode/**
     - .github/**
     - '!.github/workflows/build.yml'
     - '**/README.md'
@@ -31,17 +33,19 @@ on:
   - cron: '0 10 */15 * *'
   workflow_dispatch:
 
-concurrency:
-  group: ${{ github.workflow }}
-
 env:
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  FALU_API_SECRET_KEY: ${{ secrets.FALU_API_SECRET_KEY }}
   ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+  REVIEW_APP_NAME_SUFFIX: ${{ (github.event_name == 'pull_request' && format('-ra{0}', github.event.number)) || '' }}
+  HOSTNAME_SUFFIX_FOR_PR: ${{ (github.event_name == 'pull_request' && format('-ra{0}.hst-smpls.falu.io', github.event.number)) || '' }}
 
 jobs:
   Build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    outputs:
+      version: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
     steps:
     - name: Checkout
@@ -61,13 +65,21 @@ jobs:
         useConfigFile: true
 
     - name: Replace tokens in deploy folder
-      uses: cschleiden/replace-tokens@v1
+      if: ${{ github.actor != 'dependabot[bot]' }}
+      uses: qetza/replacetokens-action@v1.1.0
       with:
-        files: '["${{ github.workspace }}/deploy/**/*.bicep","${{ github.workspace }}/deploy/**/*.parameters.json"]'
+        sources: |
+          deploy/**/*.bicep
+          deploy/**/*.parameters.json
+        variables: '[${{ toJSON(env) }},${{ toJSON(secrets) }}]' # use env & secrets
+        log-level: 'debug'
+        if-no-files-found: 'error'
+        missing-var-log: 'error'
       env:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
     - name: Publish deploy artifact
+      if: ${{ github.actor != 'dependabot[bot]' }}
       uses: actions/upload-artifact@v4
       with:
         path: deploy
@@ -75,13 +87,13 @@ jobs:
         retention-days: 1
 
     - name: Azure Login
-      if: ${{ github.actor != 'dependabot[bot]' && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
+      if: ${{ github.actor != 'dependabot[bot]' }}
       uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: 'Docker Login'
-      if: ${{ github.actor != 'dependabot[bot]' && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
+      if: ${{ github.actor != 'dependabot[bot]' }}
       uses: azure/docker-login@v1
       with:
         login-server: ${{ env.ACR_LOGIN_SERVER }}
@@ -100,7 +112,7 @@ jobs:
         ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER || 'dummy.com' }}
 
     - name: Push docker images
-      if: ${{ github.actor != 'dependabot[bot]' && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
+      if: ${{ github.actor != 'dependabot[bot]' }}
       run: >
         docker compose
         --file ${{ github.workspace }}/docker-compose.yml
@@ -109,12 +121,49 @@ jobs:
       env:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
+  Deploy:
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    needs: Build
+    timeout-minutes: 10
+
+    concurrency:
+      group: ${{ github.workflow }}
+
+    env:
+      version: ${{ needs.Build.outputs.version }}
+
+    steps:
+    - name: Download Artifact (deploy)
+      uses: actions/download-artifact@v4
+      with:
+        name: deploy
+        path: ${{ github.workspace }}/deploy
+
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
     - name: Deploy
-      if: ${{ github.actor != 'dependabot[bot]' && ((github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags')) }}
       uses: azure/arm-deploy@v2
       with:
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: 'FALU-SAMPLES'
         template: '${{ github.workspace }}/deploy/main.bicep'
         parameters: '${{ github.workspace }}/deploy/main.parameters.json'
+        deploymentName: ${{ env.version}}
         scope: 'resourcegroup'
+
+    - name: Publish review app URLs
+      uses: thollander/actions-comment-pull-request@v2
+      if: ${{ github.event_name == 'pull_request' }}
+      with:
+        message: |
+          Deployment of your Review Apps succeeded.
+
+          You can check them out below
+          |Application|Url|
+          |--|--|
+          |Identity (Python)|https://identity-verification${{ env.HOSTNAME_SUFFIX_FOR_PR }}|
+        comment_tag: samples

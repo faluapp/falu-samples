@@ -9,6 +9,9 @@
         },
         "secretName": "star-hst-smpls-falu-io"
       }
+    },
+    "reviewAppNameSuffix": {
+      "value": "#{REVIEW_APP_NAME_SUFFIX}#"
     }
   }
 }

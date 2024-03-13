@@ -8,12 +8,16 @@ param certificateValue string = ''
 @description('The tag of the container. E.g. 1.2.0')
 param containerImageTag string = '#{DOCKER_IMAGE_TAG}#'
 
+@description('The suffix used to name the app as a reviewApp')
+param reviewAppNameSuffix string = ''
+
+var isReviewApp = reviewAppNameSuffix != null && !empty(reviewAppNameSuffix)
 var managedIdentityName = 'falu-samples'
 var keyVaultName = 'falu-samples'
 var appEnvironmentName = 'falu-samples'
 
 var dnsSuffix = 'hst-smpls.falu.io'
-var acrServerName = 'tingle${environment().suffixes.acrLoginServer}'
+var acrServerName = '#{ACR_LOGIN_SERVER}#'
 
 var appDefs = [
   { lang: 'python', name: 'identity-verification', env: [], port: 8000, cpu: '0.25', memory: '0.5Gi' }
@@ -47,7 +51,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' = {
 }
 
 /* Container App Environment */
-resource appEnvironment 'Microsoft.App/managedEnvironments@2022-10-01' = {
+resource appEnvironmentInstance 'Microsoft.App/managedEnvironments@2022-10-01' = if (!isReviewApp) {
   name: appEnvironmentName
   location: location
   properties: {
@@ -57,13 +61,14 @@ resource appEnvironment 'Microsoft.App/managedEnvironments@2022-10-01' = {
     }
   }
 }
+resource appEnvironmentRef 'Microsoft.App/managedEnvironments@2022-10-01' existing = if (isReviewApp) { name: appEnvironmentName }
 
 /* Container Apps */
 resource apps 'Microsoft.App/containerApps@2022-10-01' = [for def in appDefs: {
-  name: def.name
+  name: '${def.name}${reviewAppNameSuffix}'
   location: location
   properties: {
-    managedEnvironmentId: appEnvironment.id
+    managedEnvironmentId: isReviewApp ? appEnvironmentRef.id : appEnvironmentInstance.id
     configuration: {
       ingress: {
         external: true
