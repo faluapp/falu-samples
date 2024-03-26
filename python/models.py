@@ -42,6 +42,7 @@ class IdentityVerification(BaseModel):
 	client_secret: Optional[str] = None
 	url: Optional[str] = None
 	reports: Optional[List[str]] = None
+	temporary_key: str
 
 
 class TemporaryKey(BaseModel):
