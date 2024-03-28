@@ -11,5 +11,5 @@ If you are here looking for documentation, please help write it
 Example command (single line):
 
 ```bash
-az deployment group create --resource-group "FALU-SAMPLES" --template-file "main.bicep" --parameters "main.parameters.json" --subscription "FALU" --confirm-with-what-if
+az deployment group create --resource-group "FALU-SAMPLES" --template-file "deploy/main.bicep" --subscription "FALU SAMPLES" --confirm-with-what-if
 ```
