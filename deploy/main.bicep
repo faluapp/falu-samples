@@ -1,10 +1,6 @@
 @description('Location for all resources.')
 param location string = resourceGroup().location
 
-@secure()
-@description('The wildcard certificate in PEM format')
-param certificateValue string = ''
-
 @description('The tag of the container. E.g. 1.2.0')
 param containerImageTag string = '#{DOCKER_IMAGE_TAG}#'
 
@@ -48,16 +44,22 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' = {
     enableSoftDelete: true
     softDeleteRetentionInDays: 90
   }
+
+  // secret backing the certificate maintained OOB by https://github.com/tinglesoftware/certificates
+  resource cert 'secrets' existing = { name: 'star-hst-smpls-falu-io' }
 }
 
 /* Container App Environment */
-resource appEnvironmentInstance 'Microsoft.App/managedEnvironments@2022-10-01' = if (!isReviewApp) {
+resource appEnvironmentInstance 'Microsoft.App/managedEnvironments@2023-11-02-preview' = if (!isReviewApp) {
   name: appEnvironmentName
   location: location
   properties: {
     customDomainConfiguration: {
+      certificateKeyVaultProperties: {
+        keyVaultUrl: keyVault::cert.properties.secretUri
+        identity: managedIdentity.id
+      }
       dnsSuffix: dnsSuffix
-      certificateValue: certificateValue
     }
   }
 }
@@ -114,4 +116,15 @@ resource apps 'Microsoft.App/containerApps@2022-10-01' = [for def in appDefs: {
   }
 }]
 
-output endpoints array = [for index in range(0, length(appDefs)): 'https://${apps[index].name}.${dnsSuffix}']
+/* Role Assignments */
+resource keyVaultAdministratorRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(managedIdentity.id, 'KeyVaultAdministrator')
+  scope: resourceGroup()
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '00482a5a-887f-4fb3-b363-3b7fe8e74483')
+    principalId: managedIdentity.properties.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+output endpoints array = [for index in range(0, length(appDefs)): 'https://${apps[index].properties.configuration.ingress.fqdn}']
