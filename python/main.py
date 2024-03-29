@@ -12,7 +12,7 @@ app = FastAPI()
 
 @app.get("/ping")
 async def ping():
-	return "pong"
+	return {"ping": "pong!"}
 
 
 @app.post("/identity/create-verification", response_model=IdentityVerification)
