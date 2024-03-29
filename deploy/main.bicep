@@ -76,6 +76,13 @@ resource apps 'Microsoft.App/containerApps@2022-10-01' = [for def in appDefs: {
         external: true
         targetPort: def.lang == 'dotnet' ? 8080 : 8000
         traffic: [{ latestRevision: true, weight: 100 }]
+        corsPolicy: {
+          allowedMethods: [ 'GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE' ]
+          allowedOrigins: [ '*' ]
+          allowedHeaders: [ '*' ]
+          exposeHeaders: [ '*' ]
+          maxAge: 300 // 5 minutes in seconds
+        }
       }
       registries: [{ identity: managedIdentity.id, server: acrServerName }]
       secrets: [{ name: 'falu-secret-api-key', value: '#{FALU_API_SECRET_KEY}#' }]
