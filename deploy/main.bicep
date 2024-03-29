@@ -16,7 +16,7 @@ var dnsSuffix = 'hst-smpls.falu.io'
 var acrServerName = '#{ACR_LOGIN_SERVER}#'
 
 var appDefs = [
-  { lang: 'python', name: 'identity-verification', env: [], port: 8000, cpu: '0.25', memory: '0.5Gi' }
+  { lang: 'python', name: 'identity-verification', env: [] }
   // { lang: 'python', name: 'identity-verification', env: [] }
   // { lang: 'csharp', name: 'identity-verification', env: [] }
   // { lang: 'node', name: 'identity-verification', env: [] }
@@ -74,13 +74,11 @@ resource apps 'Microsoft.App/containerApps@2022-10-01' = [for def in appDefs: {
     configuration: {
       ingress: {
         external: true
-        targetPort: contains(def, 'port') ? def.port : 80
-        traffic: [ { latestRevision: true, weight: 100 } ]
+        targetPort: def.lang == 'dotnet' ? 8080 : 8000
+        traffic: [{ latestRevision: true, weight: 100 }]
       }
-      registries: [ { identity: managedIdentity.id, server: acrServerName } ]
-      secrets: [
-        { name: 'falu-secret-api-key', value: '#{FALU_API_SECRET_KEY}#' }
-      ]
+      registries: [{ identity: managedIdentity.id, server: acrServerName }]
+      secrets: [{ name: 'falu-secret-api-key', value: '#{FALU_API_SECRET_KEY}#' }]
     }
     template: {
       containers: [
@@ -88,24 +86,13 @@ resource apps 'Microsoft.App/containerApps@2022-10-01' = [for def in appDefs: {
           image: '${acrServerName}/falu/samples/${def.name}:${containerImageTag}'
           name: def.name
           env: concat(
-            def.lang == 'python' ? [
-              { name: 'FALU_API_KEY', secretRef: 'falu-secret-api-key' }
-            ] : [],
-            def.lang == 'dotnet' ? [
-              { name: 'ASPNETCORE_FORWARDEDHEADERS_ENABLED', value: 'true' }
-              { name: 'Falu__ApiKey', secretRef: 'falu-secret-api-key' }
-            ] : [],
+            [{ name: 'FALU_API_KEY', secretRef: 'falu-secret-api-key' }],
+            def.lang == 'dotnet' ? [{ name: 'ASPNETCORE_FORWARDEDHEADERS_ENABLED', value: 'true' }] : [],
             def.env)
-          resources: {
-            cpu: json(contains(def, 'cpu') ? def.cpu : '0.25')
-            memory: contains(def, 'memory') ? def.memory : '0.5Gi'
-          }
+          resources: { cpu: json('0.25'), memory: '0.5Gi' } // these are the least resources we can provision
         }
       ]
-      scale: {
-        minReplicas: 0
-        maxReplicas: 1
-      }
+      scale: { minReplicas: 0, maxReplicas: 1 }
     }
   }
   identity: {
