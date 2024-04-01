@@ -64,7 +64,7 @@ jobs:
 
     - name: Replace tokens in deploy folder
       if: ${{ github.actor != 'dependabot[bot]' }}
-      uses: qetza/replacetokens-action@v1.1.0
+      uses: qetza/replacetokens-action@v1.1.2
       with:
         sources: |
           deploy/**/*.bicep
