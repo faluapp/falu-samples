@@ -100,7 +100,7 @@ jobs:
 
     - name: Push docker images (latest, ShortSha)
       if: ${{ (github.ref == 'refs/heads/main') }}
-      run: docker compose --file ${{ github.workspace }}/docker-compose.latest.yml push
+      run: docker compose --file ${{ github.workspace }}/docker-compose.latest.yml build --parallel --push
       env:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
         SHORT_SHA: ${{ steps.gitversion.outputs.shortSha }}

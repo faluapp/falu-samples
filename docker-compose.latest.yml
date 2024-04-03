@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   identity-verification:
-    image: ghcr.io/faluapp/falu-samples/identity-verification:${DOCKER_IMAGE_TAG:-latest}
+    image: ghcr.io/faluapp/falu-samples/identity-verification:${DOCKER_IMAGE_TAG:-err}
   identity-verification-latest:
     extends: identity-verification
     image: ghcr.io/faluapp/falu-samples/identity-verification:latest
