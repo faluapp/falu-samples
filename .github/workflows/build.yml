@@ -98,6 +98,13 @@ jobs:
       env:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
+    - name: Push docker images (latest, ShortSha)
+      if: ${{ (github.ref == 'refs/heads/main') }}
+      run: docker compose --file ${{ github.workspace }}/docker-compose.latest.yml push
+      env:
+        DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
+        SHORT_SHA: ${{ steps.gitversion.outputs.shortSha }}
+
   Deploy:
     if: ${{ github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest

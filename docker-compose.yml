@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  identity:
+  identity-verification:
     image: ghcr.io/faluapp/falu-samples/identity-verification:${DOCKER_IMAGE_TAG:-latest}
     build:
       dockerfile: Dockerfile.python
