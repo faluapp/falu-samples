@@ -32,6 +32,7 @@ on:
   workflow_dispatch:
 
 env:
+  DOCKER_BUILDKIT: 1
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   REVIEW_APP_NAME_SUFFIX: ${{ (github.event_name == 'pull_request' && format('-ra{0}', github.event.number)) || '' }}
   HOSTNAME_SUFFIX_FOR_PR: ${{ (github.event_name == 'pull_request' && format('-ra{0}.hst-smpls.falu.io', github.event.number)) || '' }}
@@ -90,6 +91,7 @@ jobs:
         --file ${{ github.workspace }}/docker-compose.latest.yml
         build
         --parallel
+        --build-arg BUILDKIT_INLINE_CACHE=1
       env:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
