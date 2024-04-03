@@ -1,8 +1,10 @@
 version: '3.8'
 services:
+  identity-verification:
+    image: ghcr.io/faluapp/falu-samples/identity-verification:${DOCKER_IMAGE_TAG:-latest}
   identity-verification-latest:
-    extends: ghcr.io/faluapp/falu-samples/identity-verification:${DOCKER_IMAGE_TAG:-err}
+    extends: identity-verification
     image: ghcr.io/faluapp/falu-samples/identity-verification:latest
   identity-verification-short-sha:
-    extends: ghcr.io/faluapp/falu-samples/identity-verification:${DOCKER_IMAGE_TAG:-err}
+    extends: identity-verification
     image: ghcr.io/faluapp/falu-samples/identity-verification:${SHORT_SHA:-err}
