@@ -91,10 +91,9 @@ jobs:
       continue-on-error: true # Ignore errors if the image is not found
 
     - name: Build docker images
-      run:  >
+      run: >
         docker compose
         --file ${{ github.workspace }}/docker-compose.yml
-        --file ${{ github.workspace }}/docker-compose.latest.yml
         build
         --parallel
         --build-arg BUILDKIT_INLINE_CACHE=1
@@ -106,21 +105,22 @@ jobs:
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Push docker images (NuGetVersionV2)
-      if: ${{ github.actor != 'dependabot[bot]' && github.ref != 'refs/heads/main' }}
+      if: ${{ github.actor != 'dependabot[bot]' }}
       run: docker compose --file ${{ github.workspace }}/docker-compose.yml push
       env:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
-    - name: Push docker images (NuGetVersionV2, latest, ShortSha)
+    - name: Push docker images (ShortSha)
       if: ${{ github.actor != 'dependabot[bot]' && github.ref == 'refs/heads/main' }}
-      run: >
-        docker compose
-        --file ${{ github.workspace }}/docker-compose.yml
-        --file ${{ github.workspace }}/docker-compose.latest.yml
-        push
+      run: docker compose --file ${{ github.workspace }}/docker-compose.yml build --push
       env:
-        DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
-        SHORT_SHA: ${{ steps.gitversion.outputs.shortSha }}
+        DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.shortSha }}
+
+    - name: Push docker images (latest)
+      if: ${{ github.actor != 'dependabot[bot]' && github.ref == 'refs/heads/main' }}
+      run: docker compose --file ${{ github.workspace }}/docker-compose.yml build --push
+      env:
+        DOCKER_IMAGE_TAG: 'latest'
 
   Deploy:
     if: ${{ github.actor != 'dependabot[bot]' }}
