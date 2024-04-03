@@ -84,6 +84,12 @@ jobs:
         name: deploy
         retention-days: 1
 
+    - name: Pull Docker base images to warm cache
+      run: docker compose --file ${{ github.workspace }}/docker-compose.yml pull
+      env:
+        DOCKER_IMAGE_TAG: 'latest'
+      continue-on-error: true # Ignore errors if the image is not found
+
     - name: Build docker images
       run:  >
         docker compose
@@ -105,7 +111,7 @@ jobs:
       env:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
-    - name: Push docker images (latest, ShortSha)
+    - name: Push docker images (NuGetVersionV2, latest, ShortSha)
       if: ${{ github.actor != 'dependabot[bot]' && github.ref == 'refs/heads/main' }}
       run: >
         docker compose
