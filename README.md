@@ -1,20 +1,28 @@
 # Falu Samples
 
-Welcome to Falu Samples! This repository contains examples and samples to help you get started with Falu services. Below
+[![GitHub Workflow Status](https://github.com/faluapp/falu-samples/actions/workflows/build.yml/badge.svg)](https://github.com/faluapp/falu-samples/actions/workflows/build.yml)
+[![Release](https://img.shields.io/github/release/faluapp/falu-samples.svg?style=flat-square)](https://github.com/faluapp/falu-samples/releases/latest)
+[![license](https://img.shields.io/github/license/faluapp/falu-samples.svg?style=flat-square)](LICENSE)
+
+Welcome to Falu Samples! This repository contains examples/samples to help you get started with Falu services. Below
 you'll find explanations of the currently supported samples.
 
-## Python Sample
+## List of samples
 
-The Python sample demonstrates how to interact with Falu services (Identity, Payments, etc) using the Python programming
-language. It includes examples of common operations such as creating identity verifications, creating temporary keys,
-and processing payments. You can find the [Python sample](./python) in the `python` directory.
+|Sample Name|Languages/Frameworks|
+|--|--|
+|[Identity Verification](#identity-verification)|Python, .NET/C#, Java|
 
-## Java Sample
+### Identity verification
 
-The Java sample demonstrates how to integrate Falu services into a Java application. It provides examples of various
-functionalities such as creating identity verifications, creating temporary keys,
-and processing payments. You can explore the [Java sample](./java) in the `java` directory.
+Server-side functionality to show case how to integrate identity verification from the server side. These operations include creating identity verifications and temporary keys for use with the mobile-native SDKs.
 
-<br><br>
-Feel free to explore and modify these samples as needed! If you have any questions or suggestions, don't hesitate to
-reach out. Contributions to the documentation are also highly appreciated. Thank you for using Falu!
+Available in:
+
+- [Python](./identity-verification/python)
+- [.NET/C#](./identity-verification/dotnet)
+- [Java](./identity-verification/java)
+
+## Issues & Comments
+
+Feel free to explore and modify these samples as needed! If you have any questions, suggestions, bugs, requests, or issues don't hesitate to reach out. Contributions are also welcome highly appreciated. Thank you for using Falu!

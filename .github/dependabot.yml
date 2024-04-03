@@ -6,25 +6,6 @@
 
 version: 2
 updates:
-  - package-ecosystem: 'pip'
-    directory: '/python'
-    schedule:
-      interval: 'monthly'
-      time: '02:00'
-    reviewers:
-      - sethonyango
-      - mburumaxwell
-    groups:
-      python-packages:
-        patterns: ['*']
-  - package-ecosystem: 'docker'
-    directory: /
-    schedule:
-      interval: 'monthly'
-      time: '02:00'
-    reviewers:
-      - sethonyango
-      - mburumaxwell
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
@@ -39,3 +20,23 @@ updates:
       time: '02:00'
     reviewers:
       - mburumaxwell
+  - package-ecosystem: 'docker'
+    directory: /
+    schedule:
+      interval: 'monthly'
+      time: '02:00'
+    reviewers:
+      - sethonyango
+      - mburumaxwell
+
+  - package-ecosystem: 'pip'
+    directory: '/identity-verification/python'
+    schedule:
+      interval: 'monthly'
+      time: '02:00'
+    reviewers:
+      - sethonyango
+      - mburumaxwell
+    groups:
+      python-packages:
+        patterns: ['*']

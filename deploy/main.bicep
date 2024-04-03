@@ -88,7 +88,7 @@ resource apps 'Microsoft.App/containerApps@2022-10-01' = [for def in appDefs: {
     template: {
       containers: [
         {
-          image: 'ghcr.io/faluapp/falu-samples/${def.name}:${containerImageTag}'
+          image: 'ghcr.io/faluapp/falu-samples/${def.name}-${def.lang}:${containerImageTag}'
           name: def.name
           env: concat(
             [{ name: 'FALU_API_KEY', secretRef: 'falu-secret-api-key' }],
