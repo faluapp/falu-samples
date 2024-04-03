@@ -1,8 +1,14 @@
 version: '3.8'
 services:
   identity:
-    image: falu/samples/identity-verification:${DOCKER_IMAGE_TAG:-latest}
+    image: ghcr.io/faluapp/falu-samples/identity-verification:${DOCKER_IMAGE_TAG:-latest}
     build:
       dockerfile: Dockerfile.python
       context: .
     ports: ["8000:8000"]
+    labels:
+      - com.github.image.run.id=${GITHUB_RUN_ID:-0}
+      - com.github.image.run.number=${GITHUB_RUN_NUMBER:-0}
+      - com.github.image.job.id=${GITHUB_JOB:-0}
+      - com.github.image.source.sha=${GITHUB_SHA:-0}
+      - com.github.image.source.branch=${GITHUB_REF:-0}

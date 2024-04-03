@@ -33,7 +33,6 @@ on:
 
 env:
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
   REVIEW_APP_NAME_SUFFIX: ${{ (github.event_name == 'pull_request' && format('-ra{0}', github.event.number)) || '' }}
   HOSTNAME_SUFFIX_FOR_PR: ${{ (github.event_name == 'pull_request' && format('-ra{0}.hst-smpls.falu.io', github.event.number)) || '' }}
 
@@ -84,32 +83,18 @@ jobs:
         name: deploy
         retention-days: 1
 
-    - name: 'Docker Login'
-      if: ${{ github.actor != 'dependabot[bot]' }}
-      uses: azure/docker-login@v1
-      with:
-        login-server: ${{ env.ACR_LOGIN_SERVER }}
-        username: ${{ secrets.AZURE_SP_CLIENT_ID }}
-        password: ${{ secrets.AZURE_SP_CLIENT_SECRET }}
-
     - name: Build docker images
-      run: >
-        docker compose
-        --file ${{ github.workspace }}/docker-compose.yml
-        --file ${{ github.workspace }}/docker-compose.ci.yml
-        build
-        --parallel
+      run:  docker compose --file ${{ github.workspace }}/docker-compose.yml build --parallel
       env:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
-        ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER || 'dummy.com' }}
+
+    - name: Log into registry
+      if: ${{ github.actor != 'dependabot[bot]' }}
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Push docker images
       if: ${{ github.actor != 'dependabot[bot]' }}
-      run: >
-        docker compose
-        --file ${{ github.workspace }}/docker-compose.yml
-        --file ${{ github.workspace }}/docker-compose.ci.yml
-        push
+      run: docker compose --file ${{ github.workspace }}/docker-compose.yml push
       env:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
