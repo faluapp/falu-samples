@@ -13,7 +13,6 @@ var keyVaultName = 'falu-samples'
 var appEnvironmentName = 'falu-samples'
 
 var dnsSuffix = 'hst-smpls.falu.io'
-var acrServerName = '#{ACR_LOGIN_SERVER}#'
 
 var appDefs = [
   { lang: 'python', name: 'identity-verification', env: [] }
@@ -84,13 +83,12 @@ resource apps 'Microsoft.App/containerApps@2022-10-01' = [for def in appDefs: {
           maxAge: 300 // 5 minutes in seconds
         }
       }
-      registries: [{ identity: managedIdentity.id, server: acrServerName }]
       secrets: [{ name: 'falu-secret-api-key', value: '#{FALU_API_SECRET_KEY}#' }]
     }
     template: {
       containers: [
         {
-          image: '${acrServerName}/falu/samples/${def.name}:${containerImageTag}'
+          image: 'ghcr.io/faluapp/falu-samples/${def.name}:${containerImageTag}'
           name: def.name
           env: concat(
             [{ name: 'FALU_API_KEY', secretRef: 'falu-secret-api-key' }],
