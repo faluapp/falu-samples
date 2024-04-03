@@ -84,7 +84,12 @@ jobs:
         retention-days: 1
 
     - name: Build docker images
-      run:  docker compose --file ${{ github.workspace }}/docker-compose.yml build --parallel
+      run:  >
+        docker compose
+        --file ${{ github.workspace }}/docker-compose.yml
+        --file ${{ github.workspace }}/docker-compose.latest.yml
+        build
+        --parallel
       env:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
@@ -92,15 +97,19 @@ jobs:
       if: ${{ github.actor != 'dependabot[bot]' }}
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
 
-    - name: Push docker images
-      if: ${{ github.actor != 'dependabot[bot]' }}
+    - name: Push docker images (NuGetVersionV2)
+      if: ${{ github.actor != 'dependabot[bot]' && github.ref != 'refs/heads/main' }}
       run: docker compose --file ${{ github.workspace }}/docker-compose.yml push
       env:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
     - name: Push docker images (latest, ShortSha)
-      if: ${{ (github.ref == 'refs/heads/main') }}
-      run: docker compose --file ${{ github.workspace }}/docker-compose.latest.yml build --parallel --push
+      if: ${{ github.actor != 'dependabot[bot]' && github.ref == 'refs/heads/main' }}
+      run: >
+        docker compose
+        --file ${{ github.workspace }}/docker-compose.yml
+        --file ${{ github.workspace }}/docker-compose.latest.yml
+        push
       env:
         DOCKER_IMAGE_TAG: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
         SHORT_SHA: ${{ steps.gitversion.outputs.shortSha }}
