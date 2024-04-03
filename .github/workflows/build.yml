@@ -112,7 +112,8 @@ jobs:
     timeout-minutes: 5
 
     concurrency:
-      group: ${{ github.workflow }}
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: false # cancelling will not stop ARM deployment
 
     env:
       version: ${{ needs.Build.outputs.version }}
