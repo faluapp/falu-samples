@@ -49,3 +49,7 @@ updates:
     reviewers:
       - sethonyango
       - mburumaxwell
+    groups:
+      spring-framework:
+        patterns:
+          - "org.springframework.boot"
