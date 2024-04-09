@@ -6,29 +6,29 @@ The Identity Verification sample is designed to demonstrate how to integrate Fal
 into your applications. This sample covers multiple programming languages, providing a comprehensive guide for
 developers to incorporate identity verification features into their projects.
 
-### Setting Up Environment Variables
+## Setting Up Environment Variables
 
-#### [1. Python And Fast API]()
+### 1. Python And Fast API
 
 - Create a file named .env in the root directory of the [Python sample](./python).
 - Open the .env file and add the following lines:
 
 ```text
-FALU_API_KEY=flsk_123345345
+FALU_API_KEY=fskl_123345345
 ```
 
-#### [2. Java and Spring Boot]()
+### 2. Java and Spring Boot
 
 - Open the [application.properties](./java/src/main/resources/application.properties) resource file of
   the [Java sample](./java) and add or update the following line:
 
 ```properties
-falu.apiKey=flsk_123345345
+falu.apiKey=fskl_123345345
 ```
 
-### Running the Samples Locally
+## Running the Samples Locally
 
-### [1. Python And Fast API]()
+### 1. Python And Fast API
 
 To run the Identity Verification sample locally using Python, follow these steps:
 
@@ -54,7 +54,7 @@ To run the Identity Verification sample locally using Python, follow these steps
     uvicorn main:app --reload
     ```
 
-### [2. Java And Spring Boot]()
+### 2. Java And Spring Boot
 
 To run the Identity Verification sample locally using Java and Spring Boot, follow these steps:
 
@@ -74,7 +74,7 @@ cd identity-verification/java
     ./gradlew bootRun
     ```
 
-### [3. Call API Endpoints]()
+## Call API Endpoints
 
 Use the following endpoint to make a `POST` request:
 
