@@ -40,3 +40,16 @@ updates:
     groups:
       python-packages:
         patterns: ['*']
+
+  - package-ecosystem: 'gradle'
+    directory: '/identity-verification/java'
+    schedule:
+      interval: 'monthly'
+      time: '02:00'
+    reviewers:
+      - sethonyango
+      - mburumaxwell
+    groups:
+      spring-framework:
+        patterns:
+          - "org.springframework.boot"
