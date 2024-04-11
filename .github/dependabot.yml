@@ -51,5 +51,4 @@ updates:
       - mburumaxwell
     groups:
       spring-framework:
-        patterns:
-          - "org.springframework.boot"
+        patterns: ['*']
