@@ -8,7 +8,7 @@ developers to incorporate identity verification features into their projects.
 
 ## Setting Up Environment Variables
 
-### 1. Python And Fast API
+### 1. Setup Python And Fast API
 
 - Create a file named .env in the root directory of the [Python sample](./python).
 - Open the .env file and add the following lines:
@@ -17,7 +17,7 @@ developers to incorporate identity verification features into their projects.
 FALU_API_KEY=fskl_123345345
 ```
 
-### 2. Java and Spring Boot
+### 2. Setup Java and Spring Boot
 
 - Open the [application.properties](./java/src/main/resources/application.properties) resource file of
   the [Java sample](./java) and add or update the following line:
@@ -28,7 +28,7 @@ falu.apiKey=fskl_123345345
 
 ## Running the Samples Locally
 
-### 1. Python And Fast API
+### 1. Run Python And Fast API
 
 To run the Identity Verification sample locally using Python, follow these steps:
 
@@ -54,7 +54,7 @@ To run the Identity Verification sample locally using Python, follow these steps
     uvicorn main:app --reload
     ```
 
-### 2. Java And Spring Boot
+### 2. Run Java And Spring Boot
 
 To run the Identity Verification sample locally using Java and Spring Boot, follow these steps:
 

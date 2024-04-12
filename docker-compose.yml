@@ -13,3 +13,17 @@ services:
       - com.github.image.job.id=${GITHUB_JOB:-0}
       - com.github.image.source.sha=${GITHUB_SHA:-0}
       - com.github.image.source.branch=${GITHUB_REF:-0}
+
+  identity-verification-java:
+    image: ghcr.io/faluapp/falu-samples/identity-verification-java:${DOCKER_IMAGE_TAG:-latest}
+    build:
+      context: identity-verification/java
+      cache_from:
+        - ghcr.io/faluapp/falu-samples/identity-verification-java:latest
+    ports: ["8080:8080"]
+    labels:
+      - com.github.image.run.id=${GITHUB_RUN_ID:-0}
+      - com.github.image.run.number=${GITHUB_RUN_NUMBER:-0}
+      - com.github.image.job.id=${GITHUB_JOB:-0}
+      - com.github.image.source.sha=${GITHUB_SHA:-0}
+      - com.github.image.source.branch=${GITHUB_REF:-0}
