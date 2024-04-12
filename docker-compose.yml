@@ -4,7 +4,6 @@ services:
     image: ghcr.io/faluapp/falu-samples/identity-verification-python:${DOCKER_IMAGE_TAG:-latest}
     build:
       context: identity-verification/python
-      dockerfile: ../../Dockerfile.python
       cache_from:
         - ghcr.io/faluapp/falu-samples/identity-verification-python:latest
     ports: ["8000:8000"]
@@ -14,4 +13,3 @@ services:
       - com.github.image.job.id=${GITHUB_JOB:-0}
       - com.github.image.source.sha=${GITHUB_SHA:-0}
       - com.github.image.source.branch=${GITHUB_REF:-0}
-      - org.opencontainers.image.description="Sample python application providing server-side identity verification functionality using Falu."

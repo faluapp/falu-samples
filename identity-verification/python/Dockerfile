@@ -1,5 +1,6 @@
 FROM python:3.11-slim-buster
 
+LABEL org.opencontainers.image.description="Sample python application providing server-side identity verification functionality using Falu."
 EXPOSE 8000
 ENV PYTHONUNBUFFERED 1
 
