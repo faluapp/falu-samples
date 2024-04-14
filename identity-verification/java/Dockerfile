@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine as build
+FROM openjdk:18-jdk-alpine as build
 
 LABEL org.opencontainers.image.description="Sample Java application providing server-side identity verification functionality using Falu."
 
@@ -8,14 +8,10 @@ COPY gradle gradle
 COPY build.gradle settings.gradle gradlew ./
 COPY src src
 
-RUN ./gradlew build -x test
-RUN mkdir -p build/libs/dependency && (cd build/libs/dependency; jar -xf ../*.jar)
+RUN ./gradlew bootJar --stacktrace
 
-FROM openjdk:8-jdk-alpine
+FROM openjdk:18-jdk
 VOLUME /tmp
-ARG DEPENDENCY=/workspace/app/build/libs/dependency
-COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
-COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
-ENTRYPOINT ["java", "-cp", "app:app/lib/*", "io.falu.samples.identity"]
-
+ARG DEPENDENCY=/workspace/app/build/libs/*.jar
+COPY --from=build ${DEPENDENCY} /app/identity-verification.jar
+ENTRYPOINT ["java", "-jar", "/app/identity-verification.jar"]
