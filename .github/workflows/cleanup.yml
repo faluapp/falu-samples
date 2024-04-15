@@ -13,6 +13,7 @@ jobs:
       matrix:
         suite:
         - { name: 'falu-samples/identity-verification-python' }
+        - { name: 'falu-samples/identity-verification-java' }
 
     steps:
     - name: Delete old ${{ matrix.suite.name }} packages
