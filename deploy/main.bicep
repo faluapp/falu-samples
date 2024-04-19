@@ -61,6 +61,8 @@ resource appEnvironmentInstance 'Microsoft.App/managedEnvironments@2023-11-02-pr
       dnsSuffix: dnsSuffix
     }
   }
+
+  identity: { type: 'UserAssigned', userAssignedIdentities: { '${managedIdentity.id}': {} } }
 }
 resource appEnvironmentRef 'Microsoft.App/managedEnvironments@2022-10-01' existing = if (isReviewApp) { name: appEnvironmentName }
 
@@ -100,12 +102,7 @@ resource apps 'Microsoft.App/containerApps@2022-10-01' = [for def in appDefs: {
       scale: { minReplicas: 0, maxReplicas: 1 }
     }
   }
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${managedIdentity.id}': {/*ttk bug*/ }
-    }
-  }
+  identity: { type: 'UserAssigned', userAssignedIdentities: { '${managedIdentity.id}': {} } }
 }]
 
 /* Role Assignments */
