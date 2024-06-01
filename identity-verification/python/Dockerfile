@@ -11,4 +11,4 @@ RUN pip install pipenv
 COPY . .
 RUN pipenv install --system --deploy --ignore-pipfile
 
-CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["fastapi", "run"]

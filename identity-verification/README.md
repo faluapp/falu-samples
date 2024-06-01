@@ -48,10 +48,10 @@ To run the Identity Verification sample locally using Python, follow these steps
 
   Follow the instructions provided above to set up your Falu API key in the .env file.
 
-- Run the `uvicorn`
+- Run the app
 
     ```bash
-    uvicorn main:app --reload
+    fastapi dev
     ```
 
 ### 2. Run Java And Spring Boot
