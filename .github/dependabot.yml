@@ -35,4 +35,6 @@ updates:
       - mburumaxwell
     groups:
       spring-framework:
-        patterns: ['*']
+        patterns:
+          - 'io.spring.*'
+          - 'org.springframework.*'
