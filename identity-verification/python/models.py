@@ -20,12 +20,17 @@ class IdentityVerificationOptionsForIdNumber(BaseModel):
 	pass
 
 
+class IdentityVerificationOptionsForTax(BaseModel):
+	allowed: List[str]
+
+
 class IdentityVerificationOptions(BaseModel):
 	allow_uploads: Optional[bool] = None
 	id_number: Optional[IdentityVerificationOptionsForIdNumber] = None
 	document: Optional[IdentityVerificationOptionsForDocument] = None
 	selfie: Optional[IdentityVerificationOptionsForSelfie] = None
 	video: Optional[IdentityVerificationOptionsForVideo] = None
+	tax_id: Optional[IdentityVerificationOptionsForTax]
 
 
 class IdentityVerificationCreation(BaseModel):
