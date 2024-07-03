@@ -30,7 +30,7 @@ class IdentityVerificationOptions(BaseModel):
 	document: Optional[IdentityVerificationOptionsForDocument] = None
 	selfie: Optional[IdentityVerificationOptionsForSelfie] = None
 	video: Optional[IdentityVerificationOptionsForVideo] = None
-	tax_id: Optional[IdentityVerificationOptionsForTax]
+	tax_id: Optional[IdentityVerificationOptionsForTax] = None
 
 
 class IdentityVerificationCreation(BaseModel):
