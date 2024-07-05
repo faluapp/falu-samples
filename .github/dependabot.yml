@@ -14,7 +14,8 @@ updates:
       - mburumaxwell
 
   - package-ecosystem: 'pip'
-    directory: '/identity-verification/python'
+    directories:
+      - '/identity-verification/python'
     schedule:
       interval: 'monthly'
       time: '02:00'
@@ -26,7 +27,8 @@ updates:
         patterns: ['*']
 
   - package-ecosystem: 'gradle'
-    directory: '/identity-verification/java'
+    directories:
+      - '/identity-verification/java'
     schedule:
       interval: 'monthly'
       time: '02:00'
