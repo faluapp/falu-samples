@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation "io.falu:falu-java:1.4.17"
+    implementation "io.falu:falu-java:2.0.0"
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
 
     compileOnly 'org.springframework.boot:spring-boot-starter-tomcat'
