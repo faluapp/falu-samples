@@ -5,7 +5,7 @@ import io.falu.FaluClientOptions;
 import io.falu.client.ResourceResponse;
 import io.falu.models.identityVerification.*;
 import io.falu.models.temporaryKeys.TemporaryKey;
-import io.falu.models.temporaryKeys.TemporaryKeyCreateRequest;
+import io.falu.models.temporaryKeys.TemporaryKeyCreateOptions;
 import io.falu.networking.RequestOptions;
 import io.falu.samples.identity.models.IdentityVerificationRequest;
 import io.falu.samples.identity.models.IdentityVerificationResponse;
@@ -69,7 +69,7 @@ public class IdentityService {
 
         Falu falu = new Falu(options);
 
-        IdentityVerificationCreateRequest verificationCreateRequest = IdentityVerificationCreateRequest.builder()
+        IdentityVerificationCreateOptions verificationCreateRequest = IdentityVerificationCreateOptions.builder()
                 .type(request.type())
                 .returnUrl(request.returnUrl())
                 .options(makeVerificationOptions(request.options()))
@@ -109,7 +109,7 @@ public class IdentityService {
     }
 
     private TemporaryKey generateTemporaryKey(String verification, Falu falu) throws IOException {
-        TemporaryKeyCreateRequest request = TemporaryKeyCreateRequest.builder()
+        TemporaryKeyCreateOptions request = TemporaryKeyCreateOptions.builder()
                 .identityVerification(verification)
                 .build();
 
