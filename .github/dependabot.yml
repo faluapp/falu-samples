@@ -23,7 +23,7 @@ updates:
       - sethonyango
       - mburumaxwell
     groups:
-      web-api:
+      fastapi-uvicorn:
         patterns: ['fastapi', 'uvicorn']
 
   - package-ecosystem: 'gradle'
