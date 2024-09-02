@@ -23,8 +23,8 @@ updates:
       - sethonyango
       - mburumaxwell
     groups:
-      python-packages:
-        patterns: ['*']
+      web-api:
+        patterns: ['fastapi', 'uvicorn']
 
   - package-ecosystem: 'gradle'
     directories:
