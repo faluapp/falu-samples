@@ -20,8 +20,8 @@ updates:
       interval: 'monthly'
       time: '02:00'
     reviewers:
-      - sethonyango
       - mburumaxwell
+    open-pull-requests-limit: 10
     groups:
       fastapi-uvicorn:
         patterns: ['fastapi', 'uvicorn']
@@ -32,8 +32,8 @@ updates:
     schedule:
       interval: 'monthly'
       time: '02:00'
+    open-pull-requests-limit: 10
     reviewers:
-      - sethonyango
       - mburumaxwell
     groups:
       spring-framework:
